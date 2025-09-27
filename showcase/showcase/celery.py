@@ -1,22 +1,40 @@
 import os
-
 from celery import Celery
+from kombu import Exchange, Queue
 
-# Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'proj.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "showcase.settings")
 
-app = Celery('showcase')
+'''
+Segregation - for heavy tasks only
+'''
+heavy_app = Celery("showcase_heavy")
+heavy_app.config_from_object("django.conf:settings", namespace="CELERY")
 
-# Using a string here means the worker doesn't have to serialize
-# the configuration object to child processes.
-# - namespace='CELERY' means all celery-related configuration keys
-#   should have a `CELERY_` prefix.
-app.config_from_object('django.conf:settings', namespace='CELERY')
+heavy_app.conf.imports = ("showcase.heavy_tasks",)
 
-# Load task modules from all registered Django apps.
-app.autodiscover_tasks()
+heavy_app.conf.task_queues = [
+    Queue("heavy", Exchange("heavy"), routing_key="heavy.run"),
+    Queue("light", Exchange("light"), routing_key="light.run"),  # publisher needs to know it
+]
+heavy_app.conf.task_default_queue = "heavy" # if you want a default queue
+heavy_app.conf.task_routes = {
+    "showcase.heavy_tasks.heavy_task":  {"queue": "heavy", "routing_key": "heavy.run"},
+    "showcase.light_tasks.light_task":  {"queue": "light", "routing_key": "light.run"}, 
+}
+heavy_app.conf.worker_prefetch_multiplier = 1  # Sensible defaults for heavy tasks - one task at a time, no prefetch
 
-
-@app.task(bind=True, ignore_result=True)
-def debug_task(self):
-    print(f'Request: {self.request!r}')
+'''
+Segregation - for light tasks only
+'''
+light_app = Celery("showcase_light")
+light_app.config_from_object("django.conf:settings", namespace="CELERY")
+light_app.conf.imports = ("showcase.light_tasks",)
+light_app.conf.task_queues = [
+    Queue("light", Exchange("light"), routing_key="light.run"),
+    Queue("heavy", Exchange("heavy"), routing_key="heavy.run"),  # publisher needs to know it
+]
+light_app.conf.task_default_queue = "light" # if you want a default queue
+light_app.conf.task_routes = {
+    "showcase.light_tasks.light_task":  {"queue": "light", "routing_key": "light.run"},
+    "showcase.heavy_tasks.heavy_task":  {"queue": "heavy", "routing_key": "heavy.run"},  # symmetry
+}

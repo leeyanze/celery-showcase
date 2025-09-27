@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # other apps
+    'showcase',
 ]
 
 MIDDLEWARE = [
@@ -127,6 +130,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Celery Configuration Options
+CELERY_BROKER_URL = "amqp://myuser:mypassword@127.0.0.1:5672//"
 CELERY_TIMEZONE = "Asia/Singapore"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60

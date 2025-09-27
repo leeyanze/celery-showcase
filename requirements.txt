@@ -10,9 +10,12 @@ cron_descriptor==2.0.6
 Django==5.2.6
 django-celery-beat==2.8.1
 django-timezone-field==7.1
+django_celery_results==2.6.0
 kombu==5.5.4
 packaging==25.0
 prompt_toolkit==3.0.52
+psycopg==3.2.10
+psycopg-binary==3.2.10
 python-crontab==3.3.0
 python-dateutil==2.9.0.post0
 six==1.17.0
