@@ -36,5 +36,20 @@ light_app.conf.task_queues = [
 light_app.conf.task_default_queue = "light" # if you want a default queue
 light_app.conf.task_routes = {
     "showcase.light_tasks.light_task":  {"queue": "light", "routing_key": "light.run"},
-    "showcase.heavy_tasks.heavy_task":  {"queue": "heavy", "routing_key": "heavy.run"},  # symmetry
+    "showcase.heavy_tasks.heavy_task":  {"queue": "heavy", "routing_key": "heavy.run"}, 
+}
+
+'''
+Publisher / beat app that knows BOTH task modules
+'''
+publisher_app = Celery("showcase")
+publisher_app.config_from_object("django.conf:settings", namespace="CELERY")
+publisher_app.conf.imports = ("showcase.heavy_tasks", "showcase.light_tasks")
+publisher_app.conf.task_queues = [
+    Queue("heavy", Exchange("heavy"), routing_key="heavy.run"),
+    Queue("light", Exchange("light"), routing_key="light.run"),
+]
+publisher_app.conf.task_routes = {
+    "showcase.heavy_tasks.heavy_task": {"queue": "heavy", "routing_key": "heavy.run"},
+    "showcase.light_tasks.light_task": {"queue": "light", "routing_key": "light.run"},
 }

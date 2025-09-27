@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # other apps
+    'django_celery_beat',
+    
+    # my apps
     'showcase',
 ]
 

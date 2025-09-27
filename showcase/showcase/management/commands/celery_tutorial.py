@@ -115,4 +115,5 @@ class Command(BaseCommand):
 
         print("\n=== Tutorial complete ===")
         print("Watch the heavy worker run the first leg, then the light worker finish the chain.")
-        print("Tip: open the RabbitMQ UI at http://localhost:15672 for a live view.")
+        print("Now for celery-beats tutorial - goto django admin to set schedule first")
+        # print("Tip: open the RabbitMQ UI at http://localhost:15672 for a live view.")
