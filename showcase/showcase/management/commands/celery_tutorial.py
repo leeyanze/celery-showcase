@@ -71,6 +71,7 @@ class Command(BaseCommand):
         print("\n=== Step 4: Start LIGHT worker in another terminal ===")
         print("Run this in a separate terminal:")
         print("  make light_workers")
+        print("Open the RabbitMQ UI at http://localhost:15672 for a live view.")
         input("Press ENTER after the light worker is up and consuming... ")
 
         # Give worker a moment to drain
@@ -116,4 +117,4 @@ class Command(BaseCommand):
         print("\n=== Tutorial complete ===")
         print("Watch the heavy worker run the first leg, then the light worker finish the chain.")
         print("Now for celery-beats tutorial - goto django admin to set schedule first")
-        # print("Tip: open the RabbitMQ UI at http://localhost:15672 for a live view.")
+        
