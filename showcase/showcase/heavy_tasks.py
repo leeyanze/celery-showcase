@@ -10,6 +10,10 @@ class HeavyBase(Task):
     retry_jitter = True     # introduces some randomness to retry delay
     max_retries = 3         # set lower for heavy tasks to avoid clogging queue
 
+    # def on_timeout(self, exc, task_id, args, kwargs, einfo):
+    #     print("TIMEOUT", self.name, task_id, self.request.retries, self.max_retries, {"exc": str(exc)})
+    #     return super().on_timeout(exc, task_id, args, kwargs, einfo)
+
     def on_retry(self, exc, task_id, args, kwargs, einfo):
         print("RETRYING", self.name, task_id, self.request.retries, self.max_retries, {"exc": str(exc)})
         return super().on_retry(exc, task_id, args, kwargs, einfo)

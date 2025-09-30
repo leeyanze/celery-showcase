@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # other apps
     'django_celery_beat',
+    'django_celery_results',
     
     # my apps
     'showcase',
@@ -137,3 +138,16 @@ CELERY_BROKER_URL = "amqp://myuser:mypassword@127.0.0.1:5672//"
 CELERY_TIMEZONE = "Asia/Singapore"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# celery task results
+CELERY_RESULT_BACKEND = 'django-db'
+# celery setting.
+CELERY_CACHE_BACKEND = 'default'
+
+# django setting.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
